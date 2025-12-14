@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Predict</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="glass-container login-container">
+        <header>
+            <h1>AI <span>Predict</span></h1>
+            <p class="subtitle">Secure Login Panel</p>
+        </header>
+
+        <main>
+            <!-- Login Tabs -->
+            <div class="login-tabs">
+                <button id="userTab" class="tab-btn active">User Login</button>
+                <button id="adminTab" class="tab-btn">Admin Login</button>
+            </div>
+
+            <!-- User Form -->
+            <div id="userForm" class="login-form">
+                <div class="input-group">
+                    <label for="userPhone">PHONE NUMBER</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="userPhone" placeholder="Enter mobile number" autocomplete="off">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="userPass">PASSWORD</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="userPass" placeholder="Enter password">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Form (Hidden by default) -->
+            <div id="adminForm" class="login-form hidden">
+                <div class="input-group">
+                    <label for="adminKey">ADMIN KEY</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="adminKey" placeholder="Enter Admin key" autocomplete="off">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="adminPass">PASSWORD</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="adminPass" placeholder="Enter password">
+                    </div>
+                </div>
+            </div>
+
+            <button id="loginBtn" class="action-btn">
+                <span class="btn-text">LOGIN NOW</span>
+            </button>
+            <p style="margin-top: 15px; font-size: 0.75rem; color: #facc15; opacity: 0.8;">
+                Note: You can only be logged in on one device at a time. Use the LOGOUT button to switch devices.
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #38bdf8; font-weight: bold;">
+                New Users ID/Pass Contact & Call Now: 9524772443
+            </p>
+        </main>
+
+        <footer class="app-footer">
+            <p>App Create in Krish and Number 9524772443</p>
+            <a href="https://t.me/jawalfree" target="_blank" class="telegram-link">Join Telegram Channel</a>
+        </footer>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+
+</html>

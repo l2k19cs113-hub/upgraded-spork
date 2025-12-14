@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Predictor Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="glass-container">
+        <header>
+            <h1>AI <span>Predict</span></h1>
+            <p class="subtitle">Next Generation Color Prediction</p>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <label for="periodInput">PERIOD NUMBER</label>
+                <div class="input-wrapper">
+                    <input type="number" id="periodInput" placeholder="Ex: 273645" autocomplete="off">
+                    <span class="focus-border"></span>
+                </div>
+            </div>
+
+            <button id="startBtn" class="action-btn">
+                <span class="btn-text">START ANALYSIS</span>
+                <span class="btn-glow"></span>
+            </button>
+
+            <div id="resultCard" class="result-card hidden">
+                <div class="loader hidden" id="loader">
+                    <div class="spinner"></div>
+                    <p>Analyzing Algo...</p>
+                </div>
+                <div id="predictionContent" class="hidden">
+                    <p id="betInfo" class="bet-info">BET: ₹1</p>
+                    <h2 id="predictionResult" class="result-value">RED</h2>
+
+                    <div class="action-buttons">
+                        <button id="winBtn" class="result-btn win-btn">WIN</button>
+                        <button id="lossBtn" class="result-btn loss-btn">LOSS</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-section">
+                <div class="summary-card">
+                    <p class="summary-label">TOTAL PROFIT</p>
+                    <p id="totalProfitDisplay" class="summary-value">₹0</p>
+                </div>
+                <div class="summary-card">
+                    <p class="summary-label">TOTAL WINS</p>
+                    <p id="totalWinsDisplay" class="summary-value">0</p>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <div class="history-header">
+                    <h3>History Log</h3>
+                    <button id="clearHistoryBtn" class="clear-btn">Clear History</button>
+                </div>
+                <div class="table-container">
+                    <table id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Amount</th>
+                                <th>Profit</th>
+                                <th>Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- History items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p class="expiry-warning">⚠️ This App Expires in 30 Days</p>
+            <p>App Create in Krish and Number 9524772443</p>
+            <a href="https://t.me/jawalfree" target="_blank" class="telegram-link">Join Telegram Channel</a>
+            <div style="margin-top: 20px;">
+                <button id="logoutBtn" class="action-btn logout-btn"
+                    style="padding: 10px 20px; font-size: 0.9rem; width: auto; background: transparent; border: 1px solid var(--result-red); color: var(--result-red);">LOGOUT</button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

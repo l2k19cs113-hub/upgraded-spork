@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AI Predict</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-header {
+            margin-bottom: 20px;
+        }
+
+        .user-list {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+        }
+
+        .delete-btn {
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .nav-btn {
+            margin-top: 15px;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="glass-container">
+        <header class="admin-header">
+            <h3>Admin <span>Panel</span></h3>
+            <p class="subtitle">User Management</p>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <label>NEW USER PHONE</label>
+                <div class="input-wrapper">
+                    <input type="tel" id="newPhone" placeholder="Enter Phone Number" autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>NEW USER PASSWORD</label>
+                <div class="input-wrapper">
+                    <input type="text" id="newPass" placeholder="Enter Password" autocomplete="off">
+                </div>
+            </div>
+
+            <button id="createUserBtn" class="action-btn">
+                <span class="btn-text">CREATE USER</span>
+            </button>
+
+            <div class="user-list" id="userList">
+                <!-- Users will be listed here -->
+            </div>
+
+            <button onclick="window.location.href='index.html'" class="action-btn nav-btn">
+                LOGOUT
+            </button>
+        </main>
+    </div>
+
+    <script>
+        const phoneInput = document.getElementById('newPhone');
+        const passInput = document.getElementById('newPass');
+        const createBtn = document.getElementById('createUserBtn');
+        const userList = document.getElementById('userList');
+
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
+            userList.innerHTML = '';
+            if (users.length === 0) {
+                userList.innerHTML = '<p style="text-align:center; color:#94a3b8;">No users created yet.</p>';
+                return;
+            }
+            users.forEach((u, index) => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `
+                    <span>${u.phone} / ${u.pass}</span>
+                    <span class="delete-btn" onclick="deleteUser(${index})">×</span>
+                `;
+                userList.appendChild(div);
+            });
+        }
+
+        createBtn.addEventListener('click', () => {
+            const phone = phoneInput.value.trim();
+            const pass = passInput.value.trim();
+
+            if (!phone || !pass) {
+                alert('Please enter Phone and Password');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
+
+            // Check duplicate
+            if (users.some(u => u.phone === phone)) {
+                alert('User already exists!');
+                return;
+            }
+
+            users.push({ phone, pass });
+            localStorage.setItem('predict_users', JSON.stringify(users));
+
+            phoneInput.value = '';
+            passInput.value = '';
+            loadUsers();
+            alert('User Created Successfully!');
+        });
+
+        window.deleteUser = (index) => {
+            if (confirm('Delete this user?')) {
+                const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
+                users.splice(index, 1);
+                localStorage.setItem('predict_users', JSON.stringify(users));
+                loadUsers();
+            }
+        };
+
+        loadUsers();
+    </script>
+</body>
+
+</html>
