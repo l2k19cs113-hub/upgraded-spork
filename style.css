@@ -502,3 +502,33 @@ td {
 .login-form.hidden {
     display: none;
 }
+
+/* Payment Button Styles */
+.payment-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fbbf24, #d97706); /* Gold/Amber gradient */
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    text-transform: uppercase;
+}
+
+.payment-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
+    background: linear-gradient(135deg, #fcd34d, #b45309);
+}
+
+.payment-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}

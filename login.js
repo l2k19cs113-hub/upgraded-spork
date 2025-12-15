@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Hardcoded Admin Credentials
-            if (key === 'balasaranya' && pass === 'krish5@') {
+            if (key === 'adminbala' && pass === 'krish5@') {
                 window.location.href = 'admin.html';
             } else {
                 showError('Invalid Admin Credentials');
@@ -104,4 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
             input.style.borderColor = 'var(--accent-color)';
         });
     });
+
+    // Payment Button Logic
+    const paymentBtn = document.getElementById('paymentBtn');
+    if (paymentBtn) {
+        paymentBtn.addEventListener('click', () => {
+            window.location.href = 'payment.html';
+        });
+    }
 });
