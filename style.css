@@ -463,6 +463,25 @@ td {
     transform: translateY(-2px);
 }
 
+.youtube-link {
+    display: inline-block;
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 20px;
+    background: rgba(239, 68, 68, 0.1);
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.youtube-link:hover {
+    background: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+}
+
 /* ============================
    Login Page Styles
    ============================ */
