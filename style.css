@@ -602,6 +602,19 @@ td {
     box-shadow: 0 5px 15px rgba(0, 186, 242, 0.4);
 }
 
+.phonepe-btn {
+    background: #5f259f;
+    /* PhonePe Purple */
+    color: white;
+    border: 1px solid rgba(95, 37, 159, 0.3);
+}
+
+.phonepe-btn:hover {
+    background: #673ab7;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(95, 37, 159, 0.4);
+}
+
 /* Plan Selection */
 .plan-selector {
     display: flex;

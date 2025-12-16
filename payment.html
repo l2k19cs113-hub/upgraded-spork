@@ -127,13 +127,16 @@
                 <button class="app-btn paytm-btn" onclick="payWith('paytmmp')">
                     Paytm
                 </button>
+                <button class="app-btn phonepe-btn" onclick="payWith('phonepe')">
+                    PhonePe
+                </button>
             </div>
 
             <script>
-                let currentAmount = 1499; // Default amount
+                let currentAmount = 1000; // Default amount
 
                 // Set initial active state
-                document.querySelector('.plan-card').classList.add('active');
+                document.querySelectorAll('.plan-card')[1].classList.add('active');
 
                 function selectPlan(amount, element) {
                     currentAmount = amount;
@@ -151,8 +154,12 @@
                     const upiId = 'krish.05@axl';
                     const name = 'ColorPredict';
                     const currency = 'INR';
+                    const note = 'Subscription';
 
-                    const deepLink = `${app}://upi/pay?pa=${upiId}&pn=${name}&cu=${currency}&am=${currentAmount}`;
+                    // Ensure amount has 2 decimal places
+                    const formattedAmount = parseFloat(currentAmount).toFixed(2);
+
+                    const deepLink = `${app}://upi/pay?pa=${upiId}&pn=${name}&cu=${currency}&am=${formattedAmount}&tn=${note}`;
                     window.location.href = deepLink;
                 }
             </script>
