@@ -85,7 +85,7 @@
         <main style="text-align: center;">
             <div class="alert-box">
                 ⚠️ LIMITED OFFER: ₹1000 <br>
-                <span>(Last 10 People Only!)</span>
+                <span>(Last 15 People Only!)</span>
             </div>
             <div class="qr-container">
                 <img src="payment-qr.png" alt="Payment QR Code" class="qr-image">
@@ -94,6 +94,68 @@
             <p style="color: var(--text-primary); margin-bottom: 20px;">
                 Scan this QR code with any UPI app to make your payment.
             </p>
+
+            <!-- Plan Selection -->
+            <div class="plan-selector">
+                <div class="plan-card" onclick="selectPlan(1499, this)">
+                    <div style="display: flex; align-items: center;">
+                        <div class="plan-check"></div>
+                        <div class="plan-details">
+                            <span class="plan-name">Monthly Subscription</span>
+                            <span class="plan-desc">Full access for 30 days</span>
+                        </div>
+                    </div>
+                    <span class="plan-price">₹1499</span>
+                </div>
+
+                <div class="plan-card" onclick="selectPlan(1000, this)">
+                    <div style="display: flex; align-items: center;">
+                        <div class="plan-check"></div>
+                        <div class="plan-details">
+                            <span class="plan-name">New Registration</span>
+                            <span class="plan-desc">One-time registration fee</span>
+                        </div>
+                    </div>
+                    <span class="plan-price">₹1000</span>
+                </div>
+            </div>
+
+            <div class="payment-apps">
+                <button class="app-btn gpay-btn" onclick="payWith('tez')">
+                    Google Pay
+                </button>
+                <button class="app-btn paytm-btn" onclick="payWith('paytmmp')">
+                    Paytm
+                </button>
+            </div>
+
+            <script>
+                let currentAmount = 1499; // Default amount
+
+                // Set initial active state
+                document.querySelector('.plan-card').classList.add('active');
+
+                function selectPlan(amount, element) {
+                    currentAmount = amount;
+
+                    // Remove active class from all
+                    document.querySelectorAll('.plan-card').forEach(card => {
+                        card.classList.remove('active');
+                    });
+
+                    // Add active class to clicked
+                    element.classList.add('active');
+                }
+
+                function payWith(app) {
+                    const upiId = 'krish.05@axl';
+                    const name = 'ColorPredict';
+                    const currency = 'INR';
+
+                    const deepLink = `${app}://upi/pay?pa=${upiId}&pn=${name}&cu=${currency}&am=${currentAmount}`;
+                    window.location.href = deepLink;
+                }
+            </script>
 
             <button onclick="window.location.href='index.html'" class="action-btn back-btn">
                 <span class="btn-text">BACK TO LOGIN</span>
