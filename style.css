@@ -615,6 +615,48 @@ td {
     box-shadow: 0 5px 15px rgba(95, 37, 159, 0.4);
 }
 
+/* Copy UPI Section */
+.upi-copy-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.upi-text {
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 1px;
+}
+
+.copy-btn {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 5px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.copy-btn:hover {
+    background: var(--accent-color);
+    color: #0f172a;
+}
+
+.copy-feedback {
+    background: var(--result-green);
+    color: white;
+    border-color: var(--result-green);
+}
+
 /* Plan Selection */
 .plan-selector {
     display: flex;

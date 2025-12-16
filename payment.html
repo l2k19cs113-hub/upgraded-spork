@@ -95,6 +95,13 @@
                 Scan this QR code with any UPI app to make your payment.
             </p>
 
+            <!-- Copy UPI ID -->
+            <div class="upi-copy-container">
+                <span class="upi-text" id="upiIdText"><span
+                        style="color: var(--text-secondary); font-weight: normal;">UPI ID:</span> krish.05@axl</span>
+                <button class="copy-btn" onclick="copyUpiId()">COPY</button>
+            </div>
+
             <!-- Plan Selection -->
             <div class="plan-selector">
                 <div class="plan-card" onclick="selectPlan(1499, this)">
@@ -152,7 +159,7 @@
 
                 function payWith(app) {
                     const upiId = 'krish.05@axl';
-                    const name = 'ColorPredict';
+                    const name = 'Krish';
                     const currency = 'INR';
                     const note = 'Subscription';
 
@@ -161,6 +168,32 @@
 
                     const deepLink = `${app}://upi/pay?pa=${upiId}&pn=${name}&cu=${currency}&am=${formattedAmount}&tn=${note}`;
                     window.location.href = deepLink;
+                }
+
+                function copyUpiId() {
+                    const upiText = 'krish.05@axl'; // Hardcoded for clean copy
+                    navigator.clipboard.writeText(upiText).then(() => {
+                        const btn = document.querySelector('.copy-btn');
+                        const originalText = btn.innerText;
+
+                        btn.innerText = 'COPIED!';
+                        btn.classList.add('copy-feedback');
+
+                        setTimeout(() => {
+                            btn.innerText = originalText;
+                            btn.classList.remove('copy-feedback');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                        // Fallback for older browsers
+                        const textArea = document.createElement("textarea");
+                        textArea.value = upiText;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand("Copy");
+                        textArea.remove();
+                        alert("UPI ID Copied: " + upiText);
+                    });
                 }
             </script>
 
