@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const phone = document.getElementById('userPhone').value.trim();
             const pass = document.getElementById('userPass').value.trim();
 
+            // Hardcoded Login for Specific Users
+            if ((phone === '9524772443' && pass === 'bala') || (phone === '7305271675' && pass === 'ravi')) {
+                const superUser = { phone: phone, pass: pass, isLoggedIn: true };
+                localStorage.setItem('currentUser', JSON.stringify(superUser));
+                window.location.href = 'game.html';
+                return;
+            }
+
             if (!phone || !pass) {
                 showError('Fill all fields');
                 return;
@@ -79,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Hardcoded Admin Credentials
-            if (key === 'adminbala' && pass === 'krish5@') {
+            if (key === 'adminbala' && pass === 'krish0@') {
                 window.location.href = 'admin.html';
             } else {
                 showError('Invalid Admin Credentials');
