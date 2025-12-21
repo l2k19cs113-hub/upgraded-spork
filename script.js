@@ -15,14 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Logout Logic
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (currentUser) {
-                const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
-                const index = users.findIndex(u => u.phone === currentUser.phone);
-                if (index !== -1) {
-                    users[index].isLoggedIn = false;
-                    localStorage.setItem('predict_users', JSON.stringify(users));
+                // Supabase Logout State Update
+                if (window.sbHelpers) {
+                    await window.sbHelpers.setLoginState(currentUser.phone, false);
                 }
                 localStorage.removeItem('currentUser');
             }

@@ -88,31 +88,42 @@
         </main>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
     <script>
         const phoneInput = document.getElementById('newPhone');
         const passInput = document.getElementById('newPass');
         const createBtn = document.getElementById('createUserBtn');
         const userList = document.getElementById('userList');
 
-        function loadUsers() {
-            const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
+        async function loadUsers() {
+            if (!window.sbHelpers) {
+                userList.innerHTML = '<p style="text-align:center; color:#ef4444;">Connecting to DB...</p>';
+                // Retry once if helpers not ready
+                setTimeout(loadUsers, 500);
+                return;
+            }
+
+            const users = await window.sbHelpers.getAllUsers();
             userList.innerHTML = '';
+
             if (users.length === 0) {
                 userList.innerHTML = '<p style="text-align:center; color:#94a3b8;">No users created yet.</p>';
                 return;
             }
-            users.forEach((u, index) => {
+
+            users.forEach((u) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
                 div.innerHTML = `
                     <span>${u.phone} / ${u.pass}</span>
-                    <span class="delete-btn" onclick="deleteUser(${index})">×</span>
+                    <span class="delete-btn" onclick="deleteUser('${u.id}')">×</span>
                 `;
                 userList.appendChild(div);
             });
         }
 
-        createBtn.addEventListener('click', () => {
+        createBtn.addEventListener('click', async () => {
             const phone = phoneInput.value.trim();
             const pass = passInput.value.trim();
 
@@ -121,33 +132,26 @@
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
-
-            // Check duplicate
-            if (users.some(u => u.phone === phone)) {
-                alert('User already exists!');
-                return;
+            try {
+                await window.sbHelpers.registerUser(phone, pass);
+                phoneInput.value = '';
+                passInput.value = '';
+                loadUsers();
+                alert('User Created Successfully!');
+            } catch (err) {
+                alert('Error creating user (User might already exist)');
             }
-
-            users.push({ phone, pass });
-            localStorage.setItem('predict_users', JSON.stringify(users));
-
-            phoneInput.value = '';
-            passInput.value = '';
-            loadUsers();
-            alert('User Created Successfully!');
         });
 
-        window.deleteUser = (index) => {
+        window.deleteUser = async (id) => {
             if (confirm('Delete this user?')) {
-                const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
-                users.splice(index, 1);
-                localStorage.setItem('predict_users', JSON.stringify(users));
+                await window.sbHelpers.deleteUser(id);
                 loadUsers();
             }
         };
 
-        loadUsers();
+        // Allow Supabase init to finish
+        setTimeout(loadUsers, 800);
     </script>
 </body>
 

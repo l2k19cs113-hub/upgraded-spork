@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Login logic
-    loginBtn.addEventListener('click', (e) => {
+    loginBtn.addEventListener('click', async (e) => {
         e.preventDefault();
 
         if (userTab.classList.contains('active')) {
@@ -52,28 +52,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Check against localStorage
-            const users = JSON.parse(localStorage.getItem('predict_users') || '[]');
-            const userIndex = users.findIndex(u => u.phone === phone && u.pass === pass);
+            // Supabase Login
+            if (window.sbHelpers) {
+                const user = await window.sbHelpers.loginUser(phone, pass);
 
-            if (userIndex !== -1) {
-                const user = users[userIndex];
+                if (user) {
+                    if (user.isLoggedIn) {
+                        showError('Already active on another device!');
+                        return;
+                    }
 
-                // Single Device Check
-                if (user.isLoggedIn) {
-                    showError('Already active on another device!');
-                    return;
+                    // Mark as Logged In in DB
+                    await window.sbHelpers.setLoginState(user.phone, true);
+
+                    // Login Success - Store in local session
+                    user.isLoggedIn = true;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    window.location.href = 'game.html';
+                } else {
+                    showError('Invalid Phone or Password');
                 }
-
-                // Mark as Logged In
-                users[userIndex].isLoggedIn = true;
-                localStorage.setItem('predict_users', JSON.stringify(users));
-
-                // Login Success
-                localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
-                window.location.href = 'game.html';
             } else {
-                showError('Invalid Phone or Password');
+                showError('Database connecting...');
             }
 
         } else {
