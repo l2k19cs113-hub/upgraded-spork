@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pass = document.getElementById('userPass').value.trim();
 
             // Hardcoded Login for Specific Users
-            if ((phone === '9524772443' && pass === 'bala') || (phone === '7305271675' && pass === 'ravi')) {
+            if (phone === '9787911408' && pass === 'bala') {
                 const superUser = { phone: phone, pass: pass, isLoggedIn: true };
                 localStorage.setItem('currentUser', JSON.stringify(superUser));
                 window.location.href = 'game.html';
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Hardcoded Admin Credentials
-            if (key === 'adminbala' && pass === 'krish0@') {
+            if (key === 'adminbala' && pass === 'balakrish5') {
                 window.location.href = 'admin.html';
             } else {
                 showError('Invalid Admin Credentials');
