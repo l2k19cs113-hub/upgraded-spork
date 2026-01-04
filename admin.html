@@ -4,45 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - AI Predict</title>
+    <title>Admin Panel | AI Predict</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .admin-header {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .user-list {
-            margin-top: 20px;
+            margin: 25px 0;
             text-align: left;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 8px;
+            background: rgba(2, 6, 23, 0.4);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
         }
 
         .user-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.8rem;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
         }
 
         .delete-btn {
-            color: #ef4444;
+            color: var(--result-red);
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(244, 63, 94, 0.1);
+            transform: scale(1.1);
         }
 
         .nav-btn {
-            margin-top: 15px;
-            background: transparent;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
+            margin-top: 20px;
+            background: transparent !important;
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-secondary) !important;
+            box-shadow: none !important;
+            padding: 15px !important;
+            font-size: 0.9rem !important;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--text-secondary) !important;
+            color: var(--text-primary) !important;
         }
     </style>
 </head>
@@ -56,8 +81,8 @@
     <div class="glass-container">
         <header class="admin-header">
             <img src="logo.jpg" alt="AI Predict Logo" class="app-logo">
-            <h3>Admin <span>Panel</span></h3>
-            <p class="subtitle">User Management</p>
+            <h1>Admin <span>Panel</span></h1>
+            <p class="subtitle">Control Center</p>
         </header>
 
         <main>
@@ -71,6 +96,12 @@
                 <label>NEW USER PASSWORD</label>
                 <div class="input-wrapper">
                     <input type="text" id="newPass" placeholder="Enter Password" autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>REGISTRATION DATE</label>
+                <div class="input-wrapper">
+                    <input type="date" id="regDate">
                 </div>
             </div>
 
@@ -115,8 +146,13 @@
             users.forEach((u) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
+                // Format date for display
+                const dateStr = u.reg_date ? new Date(u.reg_date).toLocaleDateString() : 'No Date';
                 div.innerHTML = `
-                    <span>${u.phone} / ${u.pass}</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="color: var(--text-primary); font-weight: 600;">${u.phone} / ${u.pass}</span>
+                        <span style="font-size: 0.75rem; color: var(--accent-primary);">Reg: ${dateStr}</span>
+                    </div>
                     <span class="delete-btn" onclick="deleteUser('${u.id}')">×</span>
                 `;
                 userList.appendChild(div);
@@ -126,20 +162,22 @@
         createBtn.addEventListener('click', async () => {
             const phone = phoneInput.value.trim();
             const pass = passInput.value.trim();
+            const regDate = document.getElementById('regDate').value;
 
-            if (!phone || !pass) {
-                alert('Please enter Phone and Password');
+            if (!phone || !pass || !regDate) {
+                alert('Please fill all fields including Registration Date');
                 return;
             }
 
             try {
-                await window.sbHelpers.registerUser(phone, pass);
+                await window.sbHelpers.registerUser(phone, pass, regDate);
                 phoneInput.value = '';
                 passInput.value = '';
+                document.getElementById('regDate').value = '';
                 loadUsers();
                 alert('User Created Successfully!');
             } catch (err) {
-                alert('Error creating user (User might already exist)');
+                alert('Error creating user. If it fails, make sure "reg_date" column exists in database.');
             }
         });
 

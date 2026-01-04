@@ -47,11 +47,11 @@ if (typeof supabase === 'undefined') {
             }
         },
 
-        async registerUser(phone, pass) {
+        async registerUser(phone, pass, regDate) {
             try {
                 const { data, error } = await window.sbClient
                     .from('users')
-                    .insert([{ phone, pass, isLoggedIn: false }])
+                    .insert([{ phone, pass, reg_date: regDate, isLoggedIn: false }])
                     .select()
                     .single();
 
@@ -88,6 +88,60 @@ if (typeof supabase === 'undefined') {
                 if (error) console.error('State Update Error:', error);
             } catch (err) {
                 console.error('State Update Low Level Error:', err);
+            }
+        },
+
+        async getFeedbacks() {
+            try {
+                const { data, error } = await window.sbClient
+                    .from('feedbacks')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                return data;
+            } catch (err) {
+                console.error('Fetch Feedback Error:', err);
+                return [];
+            }
+        },
+
+        async addFeedback(name, profit, date) {
+            try {
+                const { data, error } = await window.sbClient
+                    .from('feedbacks')
+                    .insert([{ user_name: name, profit: profit, date: date }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+                return data;
+            } catch (err) {
+                console.error('Add Feedback Error:', err);
+                throw err;
+            }
+        },
+
+        async deleteFeedback(id) {
+            try {
+                const { error, count } = await window.sbClient
+                    .from('feedbacks')
+                    .delete({ count: 'exact' })
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Supabase Delete Error:', error);
+                    throw error;
+                }
+
+                if (count === 0) {
+                    throw new Error('Permission Denied or Record Not Found. Please check Supabase RLS policies.');
+                }
+
+                return true;
+            } catch (err) {
+                console.error('Delete Feedback Logic Error:', err);
+                throw err;
             }
         }
     };

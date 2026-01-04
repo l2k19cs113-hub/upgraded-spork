@@ -86,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Hardcoded Admin Credentials
+            // Admin Credentials
             if (key === 'adminbala' && pass === 'balakrish5') {
                 window.location.href = 'admin.html';
+            } else if (key === 'adminkrish' && pass === 'krishbala5') {
+                window.location.href = 'feedback-admin.html';
             } else {
                 showError('Invalid Admin Credentials');
             }
@@ -101,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.style.background = 'var(--result-red)';
         setTimeout(() => {
             loginBtn.innerText = 'LOGIN NOW';
-            loginBtn.style.background = 'linear-gradient(135deg, var(--accent-color), #2563eb)';
+            loginBtn.style.background = 'linear-gradient(135deg, var(--accent-primary), #2563eb)';
         }, 1500);
     }
 
@@ -109,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allInputs = document.querySelectorAll('input');
     allInputs.forEach(input => {
         input.addEventListener('input', () => {
-            input.style.borderColor = 'var(--accent-color)';
+            input.style.borderColor = 'var(--accent-primary)';
         });
     });
 

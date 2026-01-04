@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Panel | AI Predict</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .feedback-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(2, 6, 23, 0.4);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .feedback-details {
+            text-align: left;
+        }
+
+        .feedback-details h4 {
+            color: var(--accent-primary);
+            margin: 0 0 5px 0;
+        }
+
+        .feedback-details p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .delete-btn {
+            color: var(--result-red);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="glass-container">
+        <header>
+            <img src="logo.jpg" alt="AI Predict Logo" class="app-logo">
+            <h1>Live Profit <span>Admin</span></h1>
+            <p class="subtitle">Broadcast User Earnings</p>
+        </header>
+
+        <main>
+            <div class="input-group">
+                <label>USER NAME</label>
+                <div class="input-wrapper">
+                    <input type="text" id="fbName" placeholder="Enter Full Name" autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>PROFIT AMOUNT</label>
+                <div class="input-wrapper">
+                    <input type="text" id="fbProfit" placeholder="e.g. ₹5,000" autocomplete="off">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>DATE</label>
+                <div class="input-wrapper">
+                    <input type="date" id="fbDate">
+                </div>
+            </div>
+
+            <button id="addFeedbackBtn" class="action-btn">
+                <span class="btn-text">PUBLISH LIVE PROFIT</span>
+            </button>
+
+            <div id="feedbackList" style="margin-top: 30px;">
+                <!-- Feedbacks here -->
+            </div>
+
+            <button onclick="window.location.href='index.html'" class="action-btn"
+                style="margin-top: 20px; background: transparent; border: 1px solid var(--glass-border);">
+                LOGOUT
+            </button>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script>
+        const nameInput = document.getElementById('fbName');
+        const profitInput = document.getElementById('fbProfit');
+        const dateInput = document.getElementById('fbDate');
+        const addBtn = document.getElementById('addFeedbackBtn');
+        const list = document.getElementById('feedbackList');
+
+        async function loadFeedbacks() {
+            if (!window.sbHelpers) {
+                setTimeout(loadFeedbacks, 500);
+                return;
+            }
+            const feedbacks = await window.sbHelpers.getFeedbacks();
+            console.log('Fetched feedbacks:', feedbacks);
+            list.innerHTML = '';
+            feedbacks.forEach(fb => {
+                const div = document.createElement('div');
+                div.className = 'feedback-item';
+                div.innerHTML = `
+                    <div class="feedback-details">
+                        <h4>${fb.user_name}</h4>
+                        <p>Profit: <span style="color:#22c55e">${fb.profit}</span> | Date: ${new Date(fb.date).toLocaleDateString()}</p>
+                    </div>
+                    <span class="delete-btn" onclick="deleteFB('${fb.id}')">×</span>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        addBtn.addEventListener('click', async () => {
+            const name = nameInput.value.trim();
+            const profit = profitInput.value.trim();
+            const date = dateInput.value;
+
+            if (!name || !profit || !date) {
+                alert('Fill all fields');
+                return;
+            }
+
+            try {
+                await window.sbHelpers.addFeedback(name, profit, date);
+                nameInput.value = '';
+                profitInput.value = '';
+                dateInput.value = '';
+                loadFeedbacks();
+                alert('Feedback Published!');
+            } catch (err) {
+                alert('Error publishing feedback.');
+            }
+        });
+
+        window.deleteFB = async (id) => {
+            console.log('Attempting to delete feedback with ID:', id);
+            if (!id) {
+                alert('Invalid ID');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this feedback?')) {
+                try {
+                    const success = await window.sbHelpers.deleteFeedback(id);
+                    if (success) {
+                        alert('Deleted successfully!');
+                        loadFeedbacks();
+                    }
+                } catch (err) {
+                    console.error('Delete UI Error:', err);
+                    alert('Delete failed: ' + (err.message || 'Check database permissions'));
+                }
+            }
+        }
+
+        setTimeout(loadFeedbacks, 800);
+    </script>
+</body>
+
+</html>

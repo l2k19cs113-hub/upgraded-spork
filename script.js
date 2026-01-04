@@ -12,6 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyTableBody = document.querySelector('#historyTable tbody');
     const totalProfitDisplay = document.getElementById('totalProfitDisplay');
     const totalWinsDisplay = document.getElementById('totalWinsDisplay');
+    const expiryWarning = document.querySelector('.expiry-warning');
+
+    // Handle Expiration Logic
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.reg_date && expiryWarning) {
+        const regDate = new Date(currentUser.reg_date);
+        const today = new Date();
+
+        // Calculate difference in days
+        const diffTime = today - regDate;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const remainingDays = 30 - diffDays;
+
+        if (remainingDays <= 0) {
+            expiryWarning.textContent = '⚠️ SESSION EXPIRED';
+            expiryWarning.style.color = '#f43f5e';
+            expiryWarning.style.borderColor = '#f43f5e';
+            alert('Your session has expired. Please contact admin for renewal.');
+            // Force logout
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        } else {
+            expiryWarning.textContent = `⚠️ SESSION EXPIRES IN ${remainingDays} DAYS`;
+        }
+    }
 
     // Logout Logic
     if (logoutBtn) {
