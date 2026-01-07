@@ -12,10 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyTableBody = document.querySelector('#historyTable tbody');
     const totalProfitDisplay = document.getElementById('totalProfitDisplay');
     const totalWinsDisplay = document.getElementById('totalWinsDisplay');
+    const walletInput = document.getElementById('walletInput');
+    const currentBalanceDisplay = document.getElementById('currentBalanceDisplay');
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    // Security Check: Redirect to login if not authenticated
+    if (!currentUser) {
+        window.location.href = 'index.html';
+        return;
+    }
+
     const expiryWarning = document.querySelector('.expiry-warning');
 
     // Handle Expiration Logic
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser && currentUser.reg_date && expiryWarning) {
         const regDate = new Date(currentUser.reg_date);
         const today = new Date();
@@ -69,12 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
         "SMALL"    // Step 12
     ];
 
-    let currentStep = 1;
+    let currentStep = parseInt(localStorage.getItem('currentStep')) || 1;
     let currentPrediction = "";
     let currentPeriod = "";
-    let cycleLoss = 0; // Track accumulated losses in the current cycle
-    let globalTotalProfit = 0;
-    let globalTotalWins = 0;
+    let cycleLoss = 0;
+    let globalTotalProfit = parseFloat(localStorage.getItem('globalTotalProfit')) || 0;
+    let globalTotalWins = parseInt(localStorage.getItem('globalTotalWins')) || 0;
+    let baseWalletAmount = parseFloat(localStorage.getItem('baseWalletAmount')) || 0;
+
+    if (walletInput) {
+        walletInput.value = baseWalletAmount || '';
+        walletInput.addEventListener('input', (e) => {
+            baseWalletAmount = parseFloat(e.target.value) || 0;
+            localStorage.setItem('baseWalletAmount', baseWalletAmount);
+            updateSummaryDisplay();
+        });
+    }
+
+    // Initial UI Update
+    updateSummaryDisplay();
 
     startBtn.addEventListener('click', () => {
         const period = periodInput.value.trim();
@@ -105,23 +127,22 @@ document.addEventListener('DOMContentLoaded', () => {
             startBtn.style.opacity = '1';
 
             showPrediction();
-        }, 10); // 0.01 seconds delay
+        }, 10); // 0.01 seconds delay as requested
     });
 
     winBtn.addEventListener('click', () => {
         recordHistory("WIN");
         currentStep = 1; // Reset on Win
         cycleLoss = 0; // Reset cycle loss
+        localStorage.setItem('currentStep', currentStep);
         updateUIState();
     });
 
     lossBtn.addEventListener('click', () => {
         recordHistory("LOSS");
 
-        // Add the amount of the JUST finished round to cycleLoss
-        // We need to recalculate it or store it.
-        const baseAmount = 1;
-        const amountUsed = baseAmount * Math.pow(3, currentStep - 1);
+        // Add the amount to cycleLoss if real bet was placed
+        const amountUsed = determineBet(currentStep);
         cycleLoss += amountUsed;
 
         currentStep++; // Increment on Loss
@@ -129,18 +150,49 @@ document.addEventListener('DOMContentLoaded', () => {
             currentStep = 1; // Loop back or stop? User didn't specify. Looping for safety.
             cycleLoss = 0; // Reset if we looped back? Usually yes, new cycle.
         }
+        localStorage.setItem('currentStep', currentStep);
         updateUIState();
     });
 
     clearHistoryBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to clear the history log?')) {
+            // Reset Variables
             historyTableBody.innerHTML = '';
             cycleLoss = 0;
-            globalTotalProfit = 0;
             globalTotalWins = 0;
+            globalTotalProfit = 0;
+            currentStep = 1;
+
+            // Reset LocalStorage
+            localStorage.setItem('currentStep', 1);
+            localStorage.setItem('globalTotalProfit', 0);
+            localStorage.setItem('globalTotalWins', 0);
+
+            // Reset UI
+            if (resultCard) resultCard.classList.add('hidden');
+            const predictionContent = document.getElementById('predictionContent');
+            if (predictionContent) predictionContent.classList.add('hidden');
+
             updateSummaryDisplay();
         }
     });
+
+    function determineBet(step) {
+        // Find safe start step x so that sum of bets from x to 12 <= balance
+        // Sum Formula: (3^(13-x) - 1) / 2
+        const currentBalance = baseWalletAmount + globalTotalProfit;
+        let safeStart = 12;
+        for (let x = 1; x <= 12; x++) {
+            const sumRequired = (Math.pow(3, 13 - x) - 1) / 2;
+            if (sumRequired <= currentBalance) {
+                safeStart = x;
+                break;
+            }
+        }
+
+        if (step < safeStart) return 0;
+        return Math.pow(3, step - safeStart);
+    }
 
     function showPrediction() {
         // Get prediction based on current step (subtract 1 for array index)
@@ -156,24 +208,21 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentPrediction === 'BIG') predictionResult.classList.add('color-big');
         else if (currentPrediction === 'SMALL') predictionResult.classList.add('color-small');
 
-        // Bet Amount Calculation: 3x Multiplier
-        const baseAmount = 1;
-        const betAmount = baseAmount * Math.pow(3, currentStep - 1);
-        betInfo.textContent = `BET: ₹${betAmount}`;
+        // Dynamic Bet Calculation
+        const betAmount = determineBet(currentStep);
+        betInfo.textContent = betAmount > 0 ? `BET: ₹${betAmount}` : `BET: ₹0 (SAFE)`;
     }
 
     function recordHistory(status) {
-        const baseAmount = 1;
-        const amountUsed = baseAmount * Math.pow(3, currentStep - 1);
+        const amountUsed = determineBet(currentStep);
 
         let profit = 0;
         let profitClass = '';
 
         if (status === 'WIN') {
-            // Formula: (Bet * 2) - Bet = Bet
-            // Simple PnL for this round.
-            // Total Profit serves as the wallet accumulator.
-            profit = amountUsed; // Assuming 2x payout (Revenue 2x - Bet 1x = Profit 1x)
+            // Formula: (Bet * 2) - Tax - Bet = Profit
+            // With 2% tax: amountUsed * 0.98
+            profit = amountUsed * 0.98;
             profitClass = 'status-win';
             globalTotalWins++;
         } else {
@@ -185,13 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Global = Global + (Profit) - (Loss is negative profit so just + profit)
         // User rule: amount = amount + profit - loss (which implies summing signed values)
         globalTotalProfit += profit;
+        localStorage.setItem('globalTotalProfit', globalTotalProfit);
+        localStorage.setItem('globalTotalWins', globalTotalWins);
         updateSummaryDisplay();
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${currentPeriod}</td>
             <td>₹${amountUsed}</td>
-            <td class="${profitClass}">₹${profit}</td>
+            <td class="${profitClass}">₹${profit.toFixed(2)}</td>
             <td>${currentPrediction}</td>
             <td class="${status === 'WIN' ? 'status-win' : 'status-loss'}">${status}</td>
         `;
@@ -199,8 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSummaryDisplay() {
-        totalProfitDisplay.textContent = `₹${globalTotalProfit}`;
+        totalProfitDisplay.textContent = `₹${globalTotalProfit.toFixed(2)}`;
         totalWinsDisplay.textContent = globalTotalWins;
+
+        const currentBalance = baseWalletAmount + globalTotalProfit;
+        if (currentBalanceDisplay) {
+            currentBalanceDisplay.textContent = `₹${currentBalance.toFixed(2)}`;
+            currentBalanceDisplay.className = 'summary-value';
+            if (currentBalance > baseWalletAmount) currentBalanceDisplay.classList.add('positive');
+            else if (currentBalance < baseWalletAmount) currentBalanceDisplay.classList.add('negative');
+        }
 
         // Style Total Profit
         totalProfitDisplay.className = 'summary-value';

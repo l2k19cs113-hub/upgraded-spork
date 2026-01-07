@@ -29,11 +29,13 @@
             box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3) !important;
         }
 
-        #periodInput {
+        #periodInput,
+        #walletInput {
             font-family: monospace;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
             text-align: center;
+            padding: 12px 15px;
         }
     </style>
 </head>
@@ -53,6 +55,14 @@
         </header>
 
         <main>
+            <div class="input-group">
+                <label for="walletInput">WALLET BALANCE (₹)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="walletInput" placeholder="Enter starting balance" autocomplete="off">
+                    <span class="focus-border"></span>
+                </div>
+            </div>
+
             <div class="input-group">
                 <label for="periodInput">PERIOD NUMBER</label>
                 <div class="input-wrapper">
@@ -86,6 +96,10 @@
                 <div class="summary-card">
                     <p class="summary-label">TOTAL PROFIT</p>
                     <p id="totalProfitDisplay" class="summary-value">₹0</p>
+                </div>
+                <div class="summary-card">
+                    <p class="summary-label">WALLET BALANCE</p>
+                    <p id="currentBalanceDisplay" class="summary-value">₹0</p>
                 </div>
                 <div class="summary-card">
                     <p class="summary-label">TOTAL WINS</p>

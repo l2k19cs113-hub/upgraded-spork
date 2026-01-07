@@ -98,12 +98,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function showError(msg) {
-        const originalText = loginBtn.innerText;
-        loginBtn.innerText = msg;
+        const btnText = loginBtn.querySelector('.btn-text');
+        const originalText = btnText ? btnText.innerText : loginBtn.innerText;
+        const target = btnText || loginBtn;
+
+        target.innerText = msg;
+        const originalBg = loginBtn.style.background;
         loginBtn.style.background = 'var(--result-red)';
+
         setTimeout(() => {
-            loginBtn.innerText = 'LOGIN NOW';
-            loginBtn.style.background = 'linear-gradient(135deg, var(--accent-primary), #2563eb)';
+            target.innerText = originalText;
+            loginBtn.style.background = originalBg || '';
         }, 1500);
     }
 
