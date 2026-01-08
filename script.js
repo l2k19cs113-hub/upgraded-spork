@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Strategy Rules: 1-based index mapped to array (0-11)
-    const STRATEGY_RULES = [
+    // Strategy Rule 1
+    const RULE_1 = [
         "RED",     // Step 1
         "BIG",     // Step 2
         "BIG",     // Step 3
@@ -76,6 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
         "GREEN",   // Step 10
         "BIG",     // Step 11
         "SMALL"    // Step 12
+    ];
+
+    // Strategy Rule 2
+    const RULE_2 = [
+        "GREEN",   // Step 1
+        "SMALL",   // Step 2
+        "SMALL",   // Step 3
+        "GREEN",   // Step 4
+        "BIG",     // Step 5
+        "SMALL",   // Step 6
+        "RED",     // Step 7
+        "BIG",     // Step 8
+        "BIG",     // Step 9
+        "RED",     // Step 10
+        "SMALL",   // Step 11
+        "BIG"      // Step 12
     ];
 
     let currentStep = parseInt(localStorage.getItem('currentStep')) || 1;
@@ -195,9 +211,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showPrediction() {
+        // Rule Selection Logic: Repeat cycle of 24
+        // Rule 1 for 21 wins, Rule 2 for 3 wins
+        const winCycleIndex = globalTotalWins % 24;
+        const currentRuleSet = (winCycleIndex < 21) ? RULE_1 : RULE_2;
+
         // Get prediction based on current step (subtract 1 for array index)
-        const ruleIndex = (currentStep - 1) % STRATEGY_RULES.length;
-        currentPrediction = STRATEGY_RULES[ruleIndex];
+        const ruleIndex = (currentStep - 1) % currentRuleSet.length;
+        currentPrediction = currentRuleSet[ruleIndex];
 
         predictionResult.textContent = currentPrediction;
 
